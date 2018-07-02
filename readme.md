@@ -1,19 +1,30 @@
 # Clear Temp [![Build Status](https://travis-ci.org/rjoydip/clear-temp.svg?branch=master)](https://travis-ci.org/rjoydip/clear-temp)
 
-> Clear temp
+> Clear temp and get notified
 
 ## Install
 
-```bash
-    npm i -g clear-temp
+```
+$ npm i -g clear-temp
 ```
 
 ## Usage
 
-```js
 ```
+  Clear temp and get notified
 
-## API
+  Usage:
+      clear-temp <option>
+
+  Options:
+      version,  Get clear-temp cli version
+      sound,   Notification sound. Default: false
+
+  Examples:
+      $ clear-temp --help
+      $ clear-temp version
+      $ clear-temp sound
+```
 
 ## License
 

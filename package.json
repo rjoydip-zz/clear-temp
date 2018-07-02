@@ -1,33 +1,47 @@
 {
   "name": "clear-temp",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Clear temp and get notified",
   "main": "index.js",
   "bin": {
     "clear-temp": "index.js"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jest --coverage test.js"
+    "lint": "./node_modules/.bin/eslint **/*.js",
+    "precommit": "npm run lint"
   },
   "keywords": [
     "clear",
     "clear-temp",
     "temp"
   ],
-  "author": "Joydip Roy (rjoydip) <joydipand@gmail.com>",
+  "author": {
+    "name": "Joydip Roy",
+    "email": "joydipand@gmail.com",
+    "url": "rjoydip"
+  },
   "license": "MIT",
   "dependencies": {
     "chalk": "^2.4.1",
     "cron": "^1.3.0",
     "dot-prop": "^4.2.0",
+    "dt-info": "^1.0.0",
     "fs-extra": "^6.0.1",
     "lodash": "^4.17.10",
     "meow": "^5.0.0",
     "node-notifier": "^5.2.1",
-    "read-pkg": "^4.0.1"
+    "ora": "^2.1.0",
+    "pify": "^3.0.0",
+    "read-pkg": "^4.0.1",
+    "rimraf": "^2.6.2"
   },
   "devDependencies": {
-    "jest": "^23.1.0"
+    "eslint-config-standard": "^11.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-node": "^6.0.1",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "husky": "^1.0.0-rc.9"
   },
   "jest": {
     "transform": {}
@@ -36,5 +50,11 @@
     "cli.js",
     "test.js",
     "index.js"
-  ]
+  ],
+  "readme": "ERROR: No README data found!",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run precommit"
+    }
+  }
 }

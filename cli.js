@@ -1,4 +1,6 @@
 'use strict'
+const fs = require('fs')
+const path = require('path')
 const notifier = require('node-notifier')
 const CronJob = require('cron').CronJob
 const fse = require('fs-extra')
@@ -7,13 +9,20 @@ const chalk = require('chalk')
 const readPkg = require('read-pkg')
 const dotProp = require('dot-prop')
 const { findIndex } = require('lodash')
+const dtInfo = require('dt-info')
+const pify = require('pify')
+const rimraf = require('rimraf')
+const ora = require('ora')
 
 class ClearTemp {
     constructor() {
-        this.commands = ['time', 'day', 'version']
-        this.alias = ['t', 'd', 'v']
         this.tempDir = require('os').tmpdir()
         this.logger = console
+        this.spinner = ora('Please wait ...')
+        this.spinner.color = 'yellow'
+        this.options = {
+            sound: false
+        }
         readPkg(__dirname).then(pkg => {
             this.init(pkg)
         })
@@ -25,83 +34,26 @@ class ClearTemp {
                 ${chalk.green(`${pkg.name} <option>`)}
 
             ${chalk.yellow('Options')}:
-                ${chalk.green('time')}, ${chalk.cyan('t')}  Set a time to clear (eg: 00:20:08)    
-                ${chalk.green('day')},  ${chalk.cyan('d')}  Set a "day of week" to clear (eg: 0-6 (Sun-Sat))
-                ${chalk.green('version')},  ${chalk.cyan('v')}  Get clear-temp cli version
+                ${chalk.green('version')},  Get clear-temp cli version
+                ${chalk.green('sound')},   Notification sound. Default: ${chalk.green('false')}
        
             ${chalk.yellow('Examples')}:
                 $ ${chalk.green('clear-temp')} --help
                 $ ${chalk.green('clear-temp')} version
-                $ ${chalk.green('clear-temp')} time
-                $ ${chalk.green('clear-temp')} day
+                $ ${chalk.green('clear-temp')} sound
         `)
-
-        if (cli.input.length === 0) {
-            this.logger.log(chalk.red('Specify at least one path'))
-            process.exit(1)
-        } else {
-            /** TODO: */
-            this.exeCmd(this.formatInput(cli.input))
-        }
-    }
-
-    exeCmd(input) {
-        const DEFAULT_DAY_RANGE = '0-6'
-        const DEFAULT_TIME = '00:01:00'
-
-        if (findIndex(input, ['input', 'version']) > -1) {
-            this.version()
-        }
-
-        const DAY_INDEX = findIndex(input, ['input', 'day'])
-        const TIME_INDEX = findIndex(input, ['input', 'time'])
-
-        if (DAY_INDEX > -1 || TIME_INDEX > -1) {
-            if (DAY_INDEX > -1 && TIME_INDEX < 0) {
-                this.cron({
-                    day: input[DAY_INDEX].value,
-                    time: DEFAULT_TIME
-                })
-            } else if (TIME_INDEX > -1 && DAY_INDEX < 0) {
-                this.cron({
-                    time: input[TIME_INDEX].value,
-                    day: DEFAULT_DAY_RANGE
-                })
-            } else {
-                this.cron({
-                    time: input[TIME_INDEX].value,
-                    day: input[DAY_INDEX].value
-                })
+  
+        if(cli.input.length) {
+            if(cli.input[0].indexOf('version') > -1) {
+                return this.version()
             }
-        } else {
-            this.cron({
-                time: DEFAULT_TIME,
-                day: DEFAULT_DAY_RANGE
-            })
-        }
-    }
-
-    formatInput(input) {
-        let opt = [];
-        for (let index = 0; index < input.length; index++) {
-            if (input[index] === 'version') {
-                opt.push({
-                    input: input[index],
-                    value: null
-                })
-            } else {
-                if (this.commands.indexOf(input[index]) > -1 || this.alias.indexOf(input[index]) > -1) {
-                    opt.push({
-                        input: input[index],
-                        value: input[index + 1]
-                    })
-                    index++
-                } else {
-                    index++
-                }
+            if(cli.input[0].indexOf('sound') > -1) {
+                this.options['sound'] = true;
             }
+            this.cron()
+        } else {
+            this.cron()
         }
-        return opt
     }
 
     version() {
@@ -110,39 +62,52 @@ class ClearTemp {
         })
     }
 
-    emptyTemp() {
-        fse.emptyDir(this.tempDir, err => {
-            if (err) return this.logger.error(err)
-            else this.notifier()
+    async emptyTemp() {
+        const dir = this.tempDir
+        try {
+            await pify(fs.readdir)(dir).then(files => {
+                return Promise.all(files.map(file => pify(rimraf, { maxBusyTries: 1000 })(path.join(dir, file))))
+            })
+            this.notifier(false)
+        } catch (err) {
+            // this.logger.log(err) // debug purpose
+            this.notifier(false)
+        }
+    }
+
+    cron() {
+        this.spinner.start()
+        dtInfo.info(['hours', 'minutes', 'seconds']).then(result => {
+            try {
+                const job = new CronJob({
+                    cronTime: `${parseInt(result.seconds) + 1} ${result.minutes} ${result.hours} * * 0-6`,
+                    onTick: () => {
+                        this.emptyTemp()
+                    },
+                    start: false
+                });
+                job.start()
+            } catch (ex) {
+                this.logger.log(chalk("cron pattern not valid"));
+            }
+        }).catch(error => {
+            this.logger.log('error', error)
         })
     }
 
-    cron(value) {
-        this.logger.log(value)
-        const job = new CronJob({
-            cronTime: `00 59 13 * * ${value.day}`,
-            // cronTime: `${value.time.split(':')} * * ${value.day}`,
-            onTick: () => {
-                this.logger.log(chalk.green('cron'))
-                this.notifier() // for notification test
-                // this.emptyTemp()
-            },
-            start: false
-        });
-        job.start()
-        process.exit(1)
-    }
-
-    notifier() {
+    notifier(isError) {
+        const _message = isError ? 'Failed to clear' : 'Successfully cleared'
         return notifier.notify(
             {
                 title: 'Clear Temp',
-                message: 'Temp has been cleared',
-                // icon: path.join(__dirname, 'coulson.jpg'), // Absolute path (doesn't work on balloons)
-                sound: true, // Only Notification Center or Windows Toasters
+                message: _message,
+                icon: path.join(__dirname, 'alarm.png'), // Absolute path (doesn't work on balloons)
+                sound: this.options.sound, // Only Notification Center or Windows Toasters
                 wait: false // Wait with callback, until user action is taken against notification
             }, (err, response) => {
                 // Response is response from notification
+                this.spinner.text = _message
+                isError ? this.spinner.fail() : this.spinner.succeed()
                 process.exit(1)
             }
         )
