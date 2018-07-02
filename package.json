@@ -1,0 +1,40 @@
+{
+  "name": "clear-temp",
+  "version": "1.0.0",
+  "description": "Clear temp and get notified",
+  "main": "index.js",
+  "bin": {
+    "clear-temp": "index.js"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/jest --coverage test.js"
+  },
+  "keywords": [
+    "clear",
+    "clear-temp",
+    "temp"
+  ],
+  "author": "Joydip Roy (rjoydip) <joydipand@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.4.1",
+    "cron": "^1.3.0",
+    "dot-prop": "^4.2.0",
+    "fs-extra": "^6.0.1",
+    "lodash": "^4.17.10",
+    "meow": "^5.0.0",
+    "node-notifier": "^5.2.1",
+    "read-pkg": "^4.0.1"
+  },
+  "devDependencies": {
+    "jest": "^23.1.0"
+  },
+  "jest": {
+    "transform": {}
+  },
+  "files": [
+    "cli.js",
+    "test.js",
+    "index.js"
+  ]
+}

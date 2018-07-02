@@ -1,0 +1,60 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\Rjoy\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js install
+
+PATH: 
+  C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\Rjoy\bin;C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;C:\ProgramData\Oracle\Java\javapath;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\Program Files\Git\cmd;C:\Python27;C:\Program Files\nodejs;C:\Program Files (x86)\Windows Kits\8.1\Windows Performance Toolkit;C:\Go\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Users\Rjoy\.cargo\bin;C:\Program Files\Microsoft VS Code\bin;%USERPROFILE%\AppData\Local\Microsoft\WindowsApps;C:\Users\Rjoy\AppData\Roaming\npm;C:\Users\Rjoy\AppData\Local\Android\Sdk;C:\Users\Rjoy\AppData\Local\Android\sdk\platform-tools;C:\Program Files\Java\jdk1.8.0_152\jre\bin;C:\Program Files\ffmpeg\bin;C:\MinGW\bin;C:\Go\bin;C:\Users\Rjoy\AppData\Local\hyper\app-2.0.0\resources\bin
+
+Yarn version: 
+  1.3.2
+
+Node version: 
+  8.9.4
+
+Platform: 
+  win32 x64
+
+npm manifest: 
+  {
+    "name": "clear-temp",
+    "version": "1.0.1",
+    "description": "Clear temp",
+    "main": "cli.js",
+    "bin": "cli.js",
+    "scripts": {
+      "test": "./node_modules/.bin/jest --coverage test.js"
+    },
+    "keywords": [
+      "clear",
+      "clear-temp"
+    ],
+    "author": "Joydip Roy (rjoydip) <joydipand@gmail.com>",
+    "license": "MIT",
+    "dependencies": {
+      "chalk": "^2.4.1",
+      "cron": "^1.3.0",
+      "dot-prop": "^4.2.0",
+      "fs-extra": "^6.0.1",
+      "meow": "^5.0.0",
+      "node-notifier": "^5.2.1",
+      "read-pkg": "^4.0.1"
+    },
+    "devDependencies": {
+      "jest": "^23.1.0"
+    },
+    "jest": {
+      "transform": {}
+    },
+    "files": [
+      "cli.js",
+      "test.js"
+    ]
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: EPERM: operation not permitted, copyfile 'C:\Users\Rjoy\AppData\Local\Yarn\cache\v1\npm-escape-string-regexp-1.0.5-1b61c0562190a8dff6ae3bb2cf0200ca130b86d4\package.json' -> 'E:\work\node\clear-temp\node_modules\escape-string-regexp\package.json'
