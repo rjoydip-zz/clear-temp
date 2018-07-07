@@ -1,6 +1,6 @@
 {
   "name": "clear-temp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Clear temp and get notified",
   "main": "index.js",
   "bin": {
@@ -15,6 +15,7 @@
     "clear-temp",
     "temp"
   ],
+  "repository": "rjoydip/clear-temp",
   "author": {
     "name": "Joydip Roy",
     "email": "joydipand@gmail.com",
