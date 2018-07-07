@@ -11,6 +11,7 @@ const dtInfo = require('dt-info')
 const pify = require('pify')
 const rimraf = require('rimraf')
 const ora = require('ora')
+const pFinally = require('p-finally')
 
 class ClearTemp {
   constructor () {
@@ -82,12 +83,10 @@ class ClearTemp {
   emptyTemp () {
     const dir = this.tempDir
     try {
-      return pify(fs.readdir)(dir).then(files => {
+      pFinally(pify(fs.readdir)(dir).then(files => {
         return Promise.all(files.map(file => pify(rimraf, { maxBusyTries: 1000 })(path.join(dir, file))))
-      })
-      this.notifier(false)
+      }), () => this.notifier(false))
     } catch (err) {
-      // this.logger.log(err) // debug purpose
       this.notifier(false)
     }
   }

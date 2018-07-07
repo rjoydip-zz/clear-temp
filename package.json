@@ -29,6 +29,7 @@
     "meow": "^5.0.0",
     "node-notifier": "^5.2.1",
     "ora": "^2.1.0",
+    "p-finally": "^1.0.0",
     "pify": "^3.0.0",
     "read-pkg": "^4.0.1",
     "rimraf": "^2.6.2"
