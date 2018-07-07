@@ -79,10 +79,10 @@ class ClearTemp {
     })
   }
 
-  async emptyTemp () {
+  emptyTemp () {
     const dir = this.tempDir
     try {
-      await pify(fs.readdir)(dir).then(files => {
+      return pify(fs.readdir)(dir).then(files => {
         return Promise.all(files.map(file => pify(rimraf, { maxBusyTries: 1000 })(path.join(dir, file))))
       })
       this.notifier(false)
