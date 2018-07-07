@@ -21,9 +21,13 @@ class ClearTemp {
     this.options = {
       sound: false
     }
-    readPkg(__dirname).then(pkg => {
+    this.getPkg().then(pkg => {
       this.init(pkg)
     })
+  }
+
+  getPkg () {
+    return readPkg({ cwd: __dirname })
   }
 
   init (pkg) {
@@ -42,20 +46,35 @@ class ClearTemp {
         `)
 
     if (cli.input.length) {
-      if (cli.input[0].indexOf('version') > -1) {
+      if (this.isVersionCMD(cli.input)) {
         return this.version()
+      } else {
+        if (this.isSoundCMD(cli.input)) {
+          this.options['sound'] = true
+        }
+        this.cron()
       }
-      if (cli.input[0].indexOf('sound') > -1) {
-        this.options['sound'] = true
-      }
-      this.cron()
     } else {
       this.cron()
     }
   }
 
+  isVersionCMD (input) {
+    return input[0].indexOf('version') > -1 ||
+    input[0].indexOf('-v') > -1 ||
+    input[0].indexOf('--v') > -1 ||
+    input[0].indexOf('--version') > -1
+  }
+
+  isSoundCMD (input) {
+    return input.indexOf('sound') > -1 ||
+      input.indexOf('-s') > -1 ||
+      input.indexOf('--s') > -1 ||
+      input.indexOf('--sound') > -1
+  }
+
   version () {
-    return readPkg(__dirname).then(pkg => {
+    return this.getPkg().then(pkg => {
       return this.logger.log(chalk.green(`${dotProp.get(pkg, 'name')} version: ${chalk.green('v') + dotProp.get(pkg, 'version')}`))
     })
   }
